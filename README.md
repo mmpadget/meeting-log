@@ -1,2 +1,3 @@
 # meeting-log
-[Deployed App](https://meeting-log-da02d.web.app)
+
+This simple app creates meetings, allows people to check in, and picks random users to award giveaways. It's a good example of a Single Page Application which includes connection to a database and routing.
