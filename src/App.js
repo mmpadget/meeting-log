@@ -26,10 +26,33 @@ class App extends Component {
           user: FBUser,
           displayName: FBUser.displayName,
           userID: FBUser.uid
-        })
+        });
+
+        const meetingsRef = firebase
+        .database()
+        .ref('meetings/' + FBUser.uid);
+
+        meetingsRef.on('value', snapshot => {
+          let meetings = snapshot.val();
+          let meetingsList = [];
+
+          for(let item in meetings) {
+            meetingsList.push({
+              meetingID: item,
+              meetingName: meetings[item].meetingName
+            });
+          }
+
+          this.setState({
+            meetings: meetingsList,
+            howManyMeetings: meetingsList.length
+          });
+        });
+      } else {
+        this.setState({ user: null });
       }
-    })
-  }
+    });
+  };
 
   registerUser = userName => {
     firebase.auth().onAuthStateChanged(FBUser => {
@@ -42,9 +65,9 @@ class App extends Component {
           userID: FBUser.uid
         });
         navigate('/meetings');
-      })
-    })
-  }
+      });
+    });
+  };
 
   logOutUser = e => {
     e.preventDefault();
@@ -52,19 +75,22 @@ class App extends Component {
       displayName: null,
       userID: null,
       user: null
-    })
+    });
 
-    firebase.auth().signOut().then(() => {
+    firebase
+    .auth()
+    .signOut()
+    .then(() => {
       navigate('/login');
-    })
-  }
+    });
+  };
 
   addMeeting = meetingName => {
     const ref = firebase
     .database()
-    .ref(`meeting/${this.state.user.uid}`);
+    .ref(`meetings/${this.state.user.uid}`);
     ref.push({meetingName: meetingName});
-  }
+  };
 
   render() {
     return (
@@ -81,8 +107,16 @@ class App extends Component {
         <Router>
           <Home path="/" user={this.state.user} />
           <Login path="/login" />
-          <Meetings path="/meetings" addMeeting={this.addMeeting} />
-          <Register path="/register" registerUser={this.registerUser} />
+          <Meetings
+            path="/meetings"
+            meetings={this.state.meetings}
+            addMeeting={this.addMeeting}
+            userID={this.state.userID}
+          />
+          <Register
+            path="/register"
+            registerUser={this.registerUser}
+          />
         </Router>
       </div>
     )
