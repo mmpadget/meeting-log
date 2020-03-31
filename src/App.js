@@ -9,6 +9,7 @@ import Login from './Login';
 import Register from './Register';
 import Meetings from './Meetings';
 import CheckIn from './CheckIn';
+import Attendees from './Attendees';
 
 class App extends Component {
   constructor() {
@@ -54,6 +55,12 @@ class App extends Component {
       }
     });
   };
+
+  componentWillUnmount() {
+    // index.js:1 Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method. in Attendees (at App.js:122)
+    // Occurs when checking in the first time on an event.
+    // Occurs when deleting an event.
+  }
 
   registerUser = userName => {
     firebase.auth().onAuthStateChanged(FBUser => {
@@ -113,6 +120,10 @@ class App extends Component {
             meetings={this.state.meetings}
             addMeeting={this.addMeeting}
             userID={this.state.userID}
+          />
+          <Attendees
+            path="/attendees/:userID/:meetingID"
+            adminUser={this.state.userID}
           />
           <CheckIn
             path="/checkin/:userID/:meetingID"
