@@ -1,2 +1,2 @@
 # meeting-log
-Add, manage, and check into meetings
+[Deployed App](https://meeting-log-da02d.web.app)
